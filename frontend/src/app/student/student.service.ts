@@ -11,7 +11,7 @@ export interface Student {
 @Injectable({ providedIn: 'root' })
 export class StudentService {
 
-  private api = 'http://localhost:8080/students';
+  private api = 'https://springboot-1-1stn.onrender.com/students';
 
   constructor(private http: HttpClient) {}
 
