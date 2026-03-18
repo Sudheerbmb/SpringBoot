@@ -1,0 +1,12 @@
+<h2>Student Manager</h2>
+
+<input [(ngModel)]="newStudent.name" placeholder="Name">
+<input [(ngModel)]="newStudent.email" placeholder="Email">
+<button (click)="add()">Add</button>
+
+<ul>
+  <li *ngFor="let s of students">
+    {{s.name}} - {{s.email}}
+    <button (click)="delete(s.id!)">Delete</button>
+  </li>
+</ul>
