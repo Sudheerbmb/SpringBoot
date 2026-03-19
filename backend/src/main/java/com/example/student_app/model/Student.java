@@ -22,9 +22,8 @@ public class Student {
     @Column(unique = true)
     private String email;
 
-    @NotBlank(message = "Phone number is required")
     @Pattern(regexp = "^[+]?[0-9]{10,15}$", message = "Phone number must be valid")
-    private String phone;
+    private String phone = "";
 
     @NotNull(message = "Date of birth is required")
     @Past(message = "Date of birth must be in the past")

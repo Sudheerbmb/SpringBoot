@@ -2,9 +2,9 @@ package com.example.student_app.config;
 
 import com.example.student_app.security.JwtAuthenticationEntryPoint;
 import com.example.student_app.security.JwtAuthenticationFilter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -26,29 +26,27 @@ import java.util.Arrays;
 @EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
-    @Autowired
-    private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-
-    @Autowired
-    private JwtAuthenticationFilter jwtAuthenticationFilter;
-
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, 
+                                         @Lazy JwtAuthenticationFilter jwtAuthenticationFilter,
+                                         JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint) throws Exception {
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(authz -> authz
                 // Public endpoints
                 .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers("/students/search").permitAll()
-                .requestMatchers("/students/course/**").permitAll()
-                .requestMatchers("/students/status/**").permitAll()
-                // AI endpoints (require authentication)
-                .requestMatchers("/students/*/ai/**").authenticated()
+                .requestMatchers("/api/students/search").permitAll()
+                .requestMatchers("/api/students/course/**").permitAll()
+                .requestMatchers("/api/students/status/**").permitAll()
+                .requestMatchers("/api/courses/**").permitAll()
+                .requestMatchers("/api/assignments/**").permitAll()
+                .requestMatchers("/api/enrollments/**").permitAll()
+                .requestMatchers("/api/submissions/**").permitAll()
                 // Admin only endpoints
-                .requestMatchers("/students/**").hasAnyRole("ADMIN", "TEACHER")
-                .requestMatchers("/grades/**").hasAnyRole("ADMIN", "TEACHER")
-                .requestMatchers("/attendance/**").hasAnyRole("ADMIN", "TEACHER")
+                .requestMatchers("/api/students/**").hasAnyRole("ADMIN", "TEACHER")
+                .requestMatchers("/api/grades/**").hasAnyRole("ADMIN", "TEACHER")
+                .requestMatchers("/api/attendance/**").hasAnyRole("ADMIN", "TEACHER")
                 .anyRequest().authenticated()
             )
             .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint))
