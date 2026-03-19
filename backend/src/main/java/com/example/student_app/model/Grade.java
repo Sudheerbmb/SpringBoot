@@ -2,6 +2,7 @@ package com.example.student_app.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+import java.time.LocalDateTime;
 
 @Entity
 public class Grade {
