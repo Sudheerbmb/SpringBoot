@@ -63,11 +63,21 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@Valid @RequestBody RegisterRequest registerRequest) {
         try {
+            // Parse role from request, default to STUDENT if not provided
+            User.UserRole role = User.UserRole.STUDENT;
+            if (registerRequest.getRole() != null) {
+                try {
+                    role = User.UserRole.valueOf(registerRequest.getRole().toUpperCase());
+                } catch (IllegalArgumentException e) {
+                    role = User.UserRole.STUDENT; // Default if invalid role
+                }
+            }
+            
             User user = userService.createUser(
                     registerRequest.getUsername(),
                     registerRequest.getEmail(),
                     registerRequest.getPassword(),
-                    User.UserRole.STUDENT // Default role for new registrations
+                    role
             );
 
             Map<String, Object> response = new HashMap<>();
@@ -76,6 +86,8 @@ public class AuthController {
                 "id", user.getId(),
                 "username", user.getUsername(),
                 "email", user.getEmail(),
+                "firstName", user.getFirstName(),
+                "lastName", user.getLastName(),
                 "role", user.getRole()
             ));
 
@@ -122,6 +134,7 @@ public class AuthController {
         private String password;
         private String firstName;
         private String lastName;
+        private String role;
 
         public String getUsername() { return username; }
         public void setUsername(String username) { this.username = username; }
@@ -137,5 +150,8 @@ public class AuthController {
 
         public String getLastName() { return lastName; }
         public void setLastName(String lastName) { this.lastName = lastName; }
+
+        public String getRole() { return role; }
+        public void setRole(String role) { this.role = role; }
     }
 }

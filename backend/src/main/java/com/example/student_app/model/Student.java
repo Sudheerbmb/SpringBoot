@@ -25,9 +25,8 @@ public class Student {
     @Pattern(regexp = "^[+]?[0-9]{10,15}$", message = "Phone number must be valid")
     private String phone = "";
 
-    @NotNull(message = "Date of birth is required")
-    @Past(message = "Date of birth must be in the past")
-    private LocalDate dateOfBirth;
+        @Past(message = "Date of birth must be in the past")
+    private LocalDate dateOfBirth = LocalDate.of(2000, 1, 1);
 
     @NotBlank(message = "Course is required")
     private String course;
