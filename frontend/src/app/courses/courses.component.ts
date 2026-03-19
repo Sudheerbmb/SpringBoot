@@ -79,26 +79,18 @@ import { ApiService, Course } from '../services/api.service';
             </div>
 
             <div class="form-group">
-              <label for="semester">Semester*</label>
-              <input id="semester" type="text" formControlName="semester" placeholder="e.g., Fall 2024">
-              <div class="error" *ngIf="courseForm.get('semester')?.hasError('required')">
-                Semester is required
+              <label for="schedule">Schedule*</label>
+              <input id="schedule" type="text" formControlName="schedule" placeholder="e.g., Mon/Wed 10:00-11:30 AM">
+              <div class="error" *ngIf="courseForm.get('schedule')?.hasError('required')">
+                Schedule is required
               </div>
             </div>
 
             <div class="form-group">
-              <label for="academicYear">Academic Year*</label>
-              <input id="academicYear" type="text" formControlName="academicYear" placeholder="e.g., 2024-2025">
-              <div class="error" *ngIf="courseForm.get('academicYear')?.hasError('required')">
-                Academic year is required
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label for="maxStudents">Max Students*</label>
-              <input id="maxStudents" type="number" formControlName="maxStudents" placeholder="e.g., 30">
-              <div class="error" *ngIf="courseForm.get('maxStudents')?.hasError('required')">
-                Max students is required
+              <label for="capacity">Capacity*</label>
+              <input id="capacity" type="number" formControlName="capacity" placeholder="e.g., 30">
+              <div class="error" *ngIf="courseForm.get('capacity')?.hasError('required')">
+                Capacity is required
               </div>
             </div>
 
@@ -113,8 +105,8 @@ import { ApiService, Course } from '../services/api.service';
             </div>
 
             <div class="form-group full-width">
-              <label for="learningObjectives">Learning Objectives</label>
-              <textarea id="learningObjectives" formControlName="learningObjectives" rows="2" placeholder="What students will learn..."></textarea>
+              <label for="learningOutcomes">Learning Outcomes</label>
+              <textarea id="learningOutcomes" formControlName="learningOutcomes" rows="2" placeholder="What students will learn..."></textarea>
             </div>
           </div>
 
@@ -153,9 +145,8 @@ import { ApiService, Course } from '../services/api.service';
               <p><strong>Instructor:</strong> {{ course.instructor }}</p>
               <p><strong>Credits:</strong> {{ course.credits }}</p>
               <p><strong>Level:</strong> {{ course.level }}</p>
-              <p><strong>Semester:</strong> {{ course.semester }}</p>
-              <p><strong>Year:</strong> {{ course.academicYear }}</p>
-              <p><strong>Enrollment:</strong> {{ course.currentEnrollment || 0 }}/{{ course.maxStudents }}</p>
+              <p><strong>Schedule:</strong> {{ course.schedule }}</p>
+              <p><strong>Enrollment:</strong> {{ course.enrolledCount || 0 }}/{{ course.capacity }}</p>
               
               <div class="progress-bar">
                 <div class="progress-fill" [style.width.%]="getEnrollmentPercentage(course)"></div>
@@ -507,11 +498,10 @@ export class CoursesComponent implements OnInit {
       department: ['', Validators.required],
       level: ['', Validators.required],
       instructor: ['', Validators.required],
-      semester: ['', Validators.required],
-      academicYear: ['', Validators.required],
-      maxStudents: [0, Validators.required],
+      schedule: ['', Validators.required],
+      capacity: [0, Validators.required],
       prerequisites: [''],
-      learningObjectives: ['']
+      learningOutcomes: ['']
     });
   }
 
@@ -542,8 +532,8 @@ export class CoursesComponent implements OnInit {
       
       const courseData = {
         ...this.courseForm.value,
-        status: 'ACTIVE',
-        currentEnrollment: 0,
+        status: 'DRAFT',
+        enrolledCount: 0,
         startDate: new Date().toISOString(),
         endDate: new Date().toISOString()
       };
@@ -583,8 +573,8 @@ export class CoursesComponent implements OnInit {
   }
 
   getEnrollmentPercentage(course: Course): number {
-    const max = course.maxStudents || 1;
-    const current = course.currentEnrollment || 0;
+    const max = course.capacity || 1;
+    const current = course.enrolledCount || 0;
     return Math.min((current / max) * 100, 100);
   }
 }

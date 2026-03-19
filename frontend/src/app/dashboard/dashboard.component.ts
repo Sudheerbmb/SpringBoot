@@ -174,8 +174,8 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {
     // Check if user is authenticated
-    const token = localStorage.getItem('token');
-    if (!token) {
+    const user = localStorage.getItem('user');
+    if (!user) {
       this.router.navigate(['/login']);
     }
   }

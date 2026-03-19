@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, BehaviorSubject, tap } from 'rxjs';
+import { Observable, BehaviorSubject, tap, catchError, throwError } from 'rxjs';
 
 export interface User {
   id: number;
@@ -14,7 +14,8 @@ export interface User {
 export interface AuthResponse {
   success: boolean;
   message: string;
-  user: User;
+  user?: User;
+  error?: string;
 }
 
 export interface LoginRequest {
@@ -40,10 +41,13 @@ export class AuthService {
   public currentUser$ = this.currentUserSubject.asObservable();
 
   constructor(private http: HttpClient) {
-    // Check if user data exists in localStorage
     const userData = localStorage.getItem('user');
     if (userData) {
-      this.currentUserSubject.next(JSON.parse(userData));
+      try {
+        this.currentUserSubject.next(JSON.parse(userData));
+      } catch (e) {
+        localStorage.removeItem('user');
+      }
     }
   }
 
@@ -54,12 +58,19 @@ export class AuthService {
           localStorage.setItem('user', JSON.stringify(response.user));
           this.currentUserSubject.next(response.user);
         }
+      }),
+      catchError(error => {
+        return throwError(() => error);
       })
     );
   }
 
-  register(userData: RegisterRequest): Observable<any> {
-    return this.http.post(`${this.apiUrl}/register`, userData);
+  register(userData: RegisterRequest): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.apiUrl}/register`, userData).pipe(
+      catchError(error => {
+        return throwError(() => error);
+      })
+    );
   }
 
   logout(): void {
@@ -67,13 +78,12 @@ export class AuthService {
     this.currentUserSubject.next(null);
   }
 
-  getToken(): string | null {
-    // No token needed anymore
-    return null;
-  }
-
   isAuthenticated(): boolean {
     return !!this.currentUserSubject.value;
+  }
+
+  getCurrentUser(): User | null {
+    return this.currentUserSubject.value;
   }
 
   hasRole(role: string): boolean {

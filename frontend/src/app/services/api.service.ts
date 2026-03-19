@@ -34,16 +34,15 @@ export interface Course {
   credits: number;
   department: string;
   level: string;
+  status: string;
+  capacity: number;
+  enrolledCount: number;
   instructor: string;
-  semester: string;
-  academicYear: string;
+  schedule: string;
   startDate: string;
   endDate: string;
-  maxStudents: number;
-  currentEnrollment: number;
-  status: string;
   prerequisites: string;
-  learningObjectives: string;
+  learningOutcomes: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -52,20 +51,17 @@ export interface Assignment {
   id: number;
   title: string;
   description: string;
-  course: Course;
   type: string;
   totalPoints: number;
   dueDate: string;
-  assignedDate: string;
   status: string;
   instructions: string;
-  attachments: string;
-  timeLimit: number;
-  allowsLateSubmission: boolean;
-  latePenalty: number;
-  publishedDate: string;
+  timeLimit: number | null;
+  allowLateSubmission: boolean;
+  latePenaltyPercentage: number | null;
   createdAt: string;
   updatedAt: string;
+  courseId?: number;
 }
 
 @Injectable({
