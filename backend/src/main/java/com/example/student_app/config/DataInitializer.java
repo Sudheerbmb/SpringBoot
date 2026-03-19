@@ -49,8 +49,10 @@ public class DataInitializer implements CommandLineRunner {
         }
         
         // Create default user for testing
-        if (userRepository.count() == 0) {
+        if (!userRepository.existsByUsername("Sudheer")) {
             initializeDefaultUser();
+        } else {
+            System.out.println("Default user 'Sudheer' already exists.");
         }
     }
 

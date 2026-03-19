@@ -249,14 +249,22 @@ export class RegisterComponent implements OnInit {
         role: this.registerForm.value.role
       };
 
+      console.log('Registering user:', registerData);
+
       this.authService.register(registerData).subscribe({
         next: (response) => {
+          console.log('Registration successful:', response);
           alert('Registration successful! Please login.');
           this.router.navigate(['/login']);
         },
         error: (error) => {
+          console.error('Registration error details:', error);
           this.isLoading = false;
-          alert('Registration failed. Please try again.');
+          if (error.status === 0) {
+            alert('Cannot connect to backend. Please check if the server is running.');
+          } else {
+            alert('Registration failed: ' + (error.error?.message || error.message || 'Unknown error'));
+          }
         },
         complete: () => {
           this.isLoading = false;

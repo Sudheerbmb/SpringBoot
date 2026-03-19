@@ -173,14 +173,24 @@ export class LoginComponent implements OnInit {
         password: this.loginForm.value.password
       };
 
+      console.log('Attempting login with:', credentials);
+
       this.authService.login(credentials).subscribe({
         next: (response) => {
+          console.log('Login successful:', response);
           alert('Login successful!');
           this.router.navigate(['/dashboard']);
         },
         error: (error) => {
+          console.error('Login error details:', error);
           this.isLoading = false;
-          alert('Login failed. Please check your credentials.');
+          if (error.status === 0) {
+            alert('Cannot connect to backend. Please check if the server is running.');
+          } else if (error.status === 401) {
+            alert('Invalid username or password.');
+          } else {
+            alert('Login failed: ' + (error.error?.message || error.message || 'Unknown error'));
+          }
         },
         complete: () => {
           this.isLoading = false;
