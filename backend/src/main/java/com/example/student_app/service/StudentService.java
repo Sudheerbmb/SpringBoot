@@ -50,24 +50,43 @@ public class StudentService {
         return repo.searchStudents(keyword);
     }
 
-    // GET STUDENTS BY COURSE
-    public List<Student> getStudentsByCourse(String course) {
-        return repo.findByCourse(course);
-    }
-
-    // GET STUDENTS BY STATUS
-    public List<Student> getStudentsByStatus(Student.StudentStatus status) {
-        return repo.findByStatus(status);
-    }
-
-    // CREATE / UPDATE
-    public Student saveStudent(Student student) {
+    // CREATE
+    public Student createStudent(Student student) {
         return repo.save(student);
     }
 
+    // UPDATE
+    public Optional<Student> updateStudent(Long id, Student studentDetails) {
+        return repo.findById(id).map(student -> {
+            student.setName(studentDetails.getName());
+            student.setEmail(studentDetails.getEmail());
+            student.setPhone(studentDetails.getPhone());
+            student.setDateOfBirth(studentDetails.getDateOfBirth());
+            student.setCourse(studentDetails.getCourse());
+            student.setMajor(studentDetails.getMajor());
+            student.setSemester(studentDetails.getSemester());
+            student.setGpa(studentDetails.getGpa());
+            student.setCreditsCompleted(studentDetails.getCreditsCompleted());
+            student.setEnrollmentDate(studentDetails.getEnrollmentDate());
+            student.setGraduationDate(studentDetails.getGraduationDate());
+            student.setStatus(studentDetails.getStatus());
+            student.setAddress(studentDetails.getAddress());
+            student.setCity(studentDetails.getCity());
+            student.setState(studentDetails.getState());
+            student.setZipCode(studentDetails.getZipCode());
+            student.setCountry(studentDetails.getCountry());
+            student.setNotes(studentDetails.getNotes());
+            return repo.save(student);
+        });
+    }
+
     // DELETE
-    public void deleteStudent(Long id) {
-        repo.deleteById(id);
+    public boolean deleteStudent(Long id) {
+        if (repo.existsById(id)) {
+            repo.deleteById(id);
+            return true;
+        }
+        return false;
     }
 
     // GET STUDENT GRADES
@@ -78,6 +97,31 @@ public class StudentService {
     // GET STUDENT ATTENDANCE
     public List<Attendance> getStudentAttendance(Long studentId) {
         return attendanceRepository.findByStudentId(studentId);
+    }
+
+    // GET STUDENTS BY COURSE
+    public List<Student> getStudentsByCourse(Long courseId) {
+        return repo.findByCourse(courseId);
+    }
+
+    // GET STUDENTS BY STATUS
+    public List<Student> getStudentsByStatus(String status) {
+        return repo.findByStatus(status);
+    }
+
+    // GET STUDENTS BY MAJOR
+    public List<Student> getStudentsByMajor(String major) {
+        return repo.findByMajor(major);
+    }
+
+    // GET STUDENTS BY SEMESTER
+    public List<Student> getStudentsBySemester(String semester) {
+        return repo.findBySemester(semester);
+    }
+
+    // GET TOP PERFORMERS
+    public List<Student> getTopPerformers(int limit) {
+        return repo.findTopPerformers();
     }
 
     // GET STUDENT PERFORMANCE SUMMARY
