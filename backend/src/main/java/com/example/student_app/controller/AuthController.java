@@ -2,7 +2,6 @@ package com.example.student_app.controller;
 
 import com.example.student_app.model.User;
 import com.example.student_app.service.UserService;
-import com.example.student_app.security.JwtTokenProvider;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,13 +23,11 @@ import java.util.Date;
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
-    private final JwtTokenProvider tokenProvider;
     private final UserService userService;
 
     @Autowired
-    public AuthController(AuthenticationManager authenticationManager, JwtTokenProvider tokenProvider, UserService userService) {
+    public AuthController(AuthenticationManager authenticationManager, UserService userService) {
         this.authenticationManager = authenticationManager;
-        this.tokenProvider = tokenProvider;
         this.userService = userService;
     }
 
@@ -45,13 +42,11 @@ public class AuthController {
             );
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            String jwt = tokenProvider.generateToken(authentication);
-
             User user = (User) authentication.getPrincipal();
             
             Map<String, Object> response = new HashMap<>();
-            response.put("token", jwt);
-            response.put("type", "Bearer");
+            response.put("success", true);
+            response.put("message", "Login successful");
             response.put("user", Map.of(
                 "id", user.getId(),
                 "username", user.getUsername(),
@@ -64,9 +59,9 @@ public class AuthController {
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
             errorResponse.put("error", "Authentication failed");
             errorResponse.put("message", "Invalid username or password");
-            errorResponse.put("details", e.getMessage());
             return ResponseEntity.status(401).body(errorResponse);
         }
     }
@@ -136,9 +131,17 @@ public class AuthController {
 
     @GetMapping("/me")
     public ResponseEntity<?> getCurrentUser(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("success", false);
+            error.put("error", "Not authenticated");
+            return ResponseEntity.status(401).body(error);
+        }
+        
         User user = (User) authentication.getPrincipal();
         
         Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
         response.put("user", Map.of(
             "id", user.getId(),
             "username", user.getUsername(),

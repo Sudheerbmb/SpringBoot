@@ -12,8 +12,8 @@ export interface User {
 }
 
 export interface AuthResponse {
-  token: string;
-  type: string;
+  success: boolean;
+  message: string;
   user: User;
 }
 
@@ -40,23 +40,20 @@ export class AuthService {
   public currentUser$ = this.currentUserSubject.asObservable();
 
   constructor(private http: HttpClient) {
-    const token = this.getToken();
-    if (token) {
-      // For now, we'll just set a dummy user. In a real app, you'd decode the JWT
-      this.currentUserSubject.next({
-        id: 1,
-        username: 'user',
-        email: 'user@example.com',
-        role: 'STUDENT'
-      });
+    // Check if user data exists in localStorage
+    const userData = localStorage.getItem('user');
+    if (userData) {
+      this.currentUserSubject.next(JSON.parse(userData));
     }
   }
 
   login(credentials: LoginRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials).pipe(
       tap(response => {
-        localStorage.setItem('token', response.token);
-        this.currentUserSubject.next(response.user);
+        if (response.success && response.user) {
+          localStorage.setItem('user', JSON.stringify(response.user));
+          this.currentUserSubject.next(response.user);
+        }
       })
     );
   }
@@ -66,17 +63,17 @@ export class AuthService {
   }
 
   logout(): void {
-    localStorage.removeItem('token');
+    localStorage.removeItem('user');
     this.currentUserSubject.next(null);
   }
 
   getToken(): string | null {
-    return localStorage.getItem('token');
+    // No token needed anymore
+    return null;
   }
 
   isAuthenticated(): boolean {
-    const token = this.getToken();
-    return !!token; // Simplified for now
+    return !!this.currentUserSubject.value;
   }
 
   hasRole(role: string): boolean {
