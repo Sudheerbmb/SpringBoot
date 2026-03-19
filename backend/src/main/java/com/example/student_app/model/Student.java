@@ -23,12 +23,11 @@ public class Student {
     private String email;
 
     @Pattern(regexp = "^[+]?[0-9]{10,15}$", message = "Phone number must be valid")
-    private String phone = "";
+    private String phone;
 
-        @Past(message = "Date of birth must be in the past")
-    private LocalDate dateOfBirth = LocalDate.of(2000, 1, 1);
+    @Past(message = "Date of birth must be in the past")
+    private LocalDate dateOfBirth;
 
-    @NotBlank(message = "Course is required")
     private String course;
 
     private String major;
