@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Login</title>
+</head>
+<body>
+    <h1>Test Backend Login</h1>
+    
+    <h2>Health Check</h2>
+    <button onclick="testHealth()">Test Health</button>
+    <div id="health-result"></div>
+    
+    <h2>Debug Users</h2>
+    <button onclick="debugUsers()">Debug Users</button>
+    <div id="users-result"></div>
+    
+    <h2>Login Test</h2>
+    <input type="text" id="username" value="Sudheer" placeholder="Username">
+    <input type="password" id="password" value="Sudheer@123" placeholder="Password">
+    <button onclick="testLogin()">Test Login</button>
+    <div id="login-result"></div>
+
+    <script>
+        async function testHealth() {
+            try {
+                const response = await fetch('https://springboot-1-1stn.onrender.com/api/auth/health');
+                const data = await response.json();
+                document.getElementById('health-result').innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+            } catch (error) {
+                document.getElementById('health-result').innerHTML = `<div style="color: red;">Error: ${error.message}</div>`;
+            }
+        }
+
+        async function debugUsers() {
+            try {
+                const response = await fetch('https://springboot-1-1stn.onrender.com/api/auth/debug/users');
+                const data = await response.json();
+                document.getElementById('users-result').innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+            } catch (error) {
+                document.getElementById('users-result').innerHTML = `<div style="color: red;">Error: ${error.message}</div>`;
+            }
+        }
+
+        async function testLogin() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            try {
+                const response = await fetch('https://springboot-1-1stn.onrender.com/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        username: username,
+                        password: password
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    document.getElementById('login-result').innerHTML = `<div style="color: green;">Login Successful!<br><pre>${JSON.stringify(data, null, 2)}</pre></div>`;
+                } else {
+                    document.getElementById('login-result').innerHTML = `<div style="color: red;">Login Failed: ${response.status}<br><pre>${JSON.stringify(data, null, 2)}</pre></div>`;
+                }
+            } catch (error) {
+                document.getElementById('login-result').innerHTML = `<div style="color: red;">Error: ${error.message}</div>`;
+            }
+        }
+    </script>
+</body>
+</html>

@@ -47,6 +47,10 @@ public class UserService implements UserDetailsService {
         return userRepository.save(user);
     }
 
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
     public User updateUser(Long userId, String email, String firstName, String lastName) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));

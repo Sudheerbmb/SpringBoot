@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.Date;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -58,6 +61,30 @@ public class AuthController {
         ));
 
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/health")
+    public ResponseEntity<?> health() {
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", "Backend is running!");
+        response.put("timestamp", new Date());
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/debug/users")
+    public ResponseEntity<?> debugUsers() {
+        List<Map<String, Object>> users = userService.getAllUsers().stream().map(user -> {
+            Map<String, Object> userMap = new HashMap<>();
+            userMap.put("id", user.getId());
+            userMap.put("username", user.getUsername());
+            userMap.put("email", user.getEmail());
+            userMap.put("role", user.getRole());
+            userMap.put("enabled", user.isEnabled());
+            userMap.put("passwordLength", user.getPassword() != null ? user.getPassword().length() : 0);
+            return userMap;
+        }).collect(Collectors.toList());
+        
+        return ResponseEntity.ok(users);
     }
 
     @PostMapping("/register")
