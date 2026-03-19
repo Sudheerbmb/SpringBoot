@@ -42,8 +42,7 @@ public class Student {
     @Min(value = 0, message = "Credits completed cannot be negative")
     private Integer creditsCompleted;
     
-    @NotNull(message = "Enrollment date is required")
-    private LocalDate enrollmentDate;
+    private LocalDate enrollmentDate = LocalDate.now();
     
     private LocalDate graduationDate;
     
