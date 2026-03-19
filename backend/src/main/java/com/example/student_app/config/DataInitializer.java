@@ -244,13 +244,12 @@ public class DataInitializer implements CommandLineRunner {
             assignment1.setType(Assignment.AssignmentType.QUIZ);
             assignment1.setTotalPoints(100);
             assignment1.setDueDate(java.time.LocalDateTime.of(2024, 10, 15, 23, 59));
-            assignment1.setAssignedDate(java.time.LocalDateTime.now());
             assignment1.setStatus(Assignment.AssignmentStatus.PUBLISHED);
             assignment1.setInstructions("Complete all 20 multiple choice questions");
             assignment1.setTimeLimit(60);
-            assignment1.setAllowsLateSubmission(true);
-            assignment1.setLatePenalty(10);
-            assignment1.setPublishedDate(java.time.LocalDateTime.now());
+            assignment1.setAllowLateSubmission(true);
+            assignment1.setLatePenaltyPercentage(10.0);
+            assignment1.setCreatedAt(java.time.LocalDateTime.now());
 
             Assignment assignment2 = new Assignment();
             assignment2.setTitle("Hello World Program");
@@ -259,13 +258,12 @@ public class DataInitializer implements CommandLineRunner {
             assignment2.setType(Assignment.AssignmentType.PROJECT);
             assignment2.setTotalPoints(50);
             assignment2.setDueDate(java.time.LocalDateTime.of(2024, 9, 30, 23, 59));
-            assignment2.setAssignedDate(java.time.LocalDateTime.now());
             assignment2.setStatus(Assignment.AssignmentStatus.PUBLISHED);
             assignment2.setInstructions("Submit programs in Python, Java, and C++");
             assignment2.setTimeLimit(null);
-            assignment2.setAllowsLateSubmission(true);
-            assignment2.setLatePenalty(15);
-            assignment2.setPublishedDate(java.time.LocalDateTime.now());
+            assignment2.setAllowLateSubmission(true);
+            assignment2.setLatePenaltyPercentage(15.0);
+            assignment2.setCreatedAt(java.time.LocalDateTime.now());
 
             assignmentRepository.save(assignment1);
             assignmentRepository.save(assignment2);
@@ -279,13 +277,12 @@ public class DataInitializer implements CommandLineRunner {
             assignment3.setType(Assignment.AssignmentType.EXAM);
             assignment3.setTotalPoints(200);
             assignment3.setDueDate(java.time.LocalDateTime.of(2024, 11, 1, 14, 0));
-            assignment3.setAssignedDate(java.time.LocalDateTime.now());
             assignment3.setStatus(Assignment.AssignmentStatus.PUBLISHED);
             assignment3.setInstructions("Complete both theoretical and practical problems");
             assignment3.setTimeLimit(120);
-            assignment3.setAllowsLateSubmission(false);
-            assignment3.setLatePenalty(0);
-            assignment3.setPublishedDate(java.time.LocalDateTime.now());
+            assignment3.setAllowLateSubmission(false);
+            assignment3.setLatePenaltyPercentage(0.0);
+            assignment3.setCreatedAt(java.time.LocalDateTime.now());
 
             assignmentRepository.save(assignment3);
         }
@@ -298,13 +295,12 @@ public class DataInitializer implements CommandLineRunner {
             assignment4.setType(Assignment.AssignmentType.PROJECT);
             assignment4.setTotalPoints(150);
             assignment4.setDueDate(java.time.LocalDateTime.of(2024, 12, 1, 23, 59));
-            assignment4.setAssignedDate(java.time.LocalDateTime.now());
             assignment4.setStatus(Assignment.AssignmentStatus.PUBLISHED);
             assignment4.setInstructions("Include market analysis, financial projections, and marketing strategy");
             assignment4.setTimeLimit(null);
-            assignment4.setAllowsLateSubmission(true);
-            assignment4.setLatePenalty(5);
-            assignment4.setPublishedDate(java.time.LocalDateTime.now());
+            assignment4.setAllowLateSubmission(true);
+            assignment4.setLatePenaltyPercentage(5.0);
+            assignment4.setCreatedAt(java.time.LocalDateTime.now());
 
             assignmentRepository.save(assignment4);
         }
