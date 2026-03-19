@@ -1,21 +1,23 @@
-<h2>Student Manager</h2>
+<div class="container">
 
-<!-- FORM -->
-<input [(ngModel)]="newStudent.name" placeholder="Name">
-<input [(ngModel)]="newStudent.email" placeholder="Email">
+  <h2>🎓 Student Manager</h2>
 
-<button *ngIf="!isEditMode" (click)="add()">Add</button>
-<button *ngIf="isEditMode" (click)="update()">Update</button>
-<button *ngIf="isEditMode" (click)="resetForm()">Cancel</button>
+  <input [(ngModel)]="newStudent.name" placeholder="Enter Name">
+  <input [(ngModel)]="newStudent.email" placeholder="Enter Email">
 
-<hr>
+  <button *ngIf="!isEditMode" (click)="add()">Add</button>
+  <button *ngIf="isEditMode" (click)="update()">Update</button>
+  <button *ngIf="isEditMode" (click)="resetForm()">Cancel</button>
 
-<!-- LIST -->
-<ul>
-  <li *ngFor="let s of students">
-    {{s.name}} - {{s.email}}
+  <ul>
+    <li *ngFor="let s of students; trackBy: trackById">
+      <span>{{s.name}} - {{s.email}}</span>
 
-    <button (click)="edit(s)">Edit</button>
-    <button (click)="delete(s.id!)">Delete</button>
-  </li>
-</ul>
+      <div>
+        <button (click)="edit(s)">Edit</button>
+        <button (click)="delete(s.id!)">Delete</button>
+      </div>
+    </li>
+  </ul>
+
+</div>

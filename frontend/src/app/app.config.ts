@@ -5,7 +5,7 @@ import { routes } from './app.routes';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideHttpClient(withFetch()),   // ✅ better performance (modern)
+    provideHttpClient(withFetch()),
     provideRouter(routes)
   ]
 };

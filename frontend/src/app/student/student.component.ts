@@ -25,48 +25,58 @@ export class StudentComponent {
     this.loadStudents();
   }
 
-  // ✅ LOAD ALL
   loadStudents() {
     this.service.getStudents().subscribe(data => {
       this.students = data;
     });
   }
 
-  // ✅ ADD
+  // ⚡ INSTANT ADD
   add() {
-    this.service.addStudent(this.newStudent).subscribe(() => {
-      this.resetForm();
-      this.loadStudents();
+    const temp = { ...this.newStudent };
+
+    this.students.push(temp);
+
+    this.service.addStudent(this.newStudent).subscribe(res => {
+      Object.assign(temp, res);
     });
+
+    this.resetForm();
   }
 
-  // ✅ DELETE
+  // ⚡ INSTANT DELETE
   delete(id: number) {
-    this.service.deleteStudent(id).subscribe(() => {
-      this.loadStudents();
-    });
+    this.students = this.students.filter(s => s.id !== id);
+    this.service.deleteStudent(id).subscribe();
   }
 
-  // ✅ EDIT (fill form)
+  // EDIT
   edit(student: Student) {
     this.newStudent = { ...student };
     this.isEditMode = true;
   }
 
-  // ✅ UPDATE
+  // ⚡ INSTANT UPDATE
   update() {
     if (!this.newStudent.id) return;
 
-    this.service.updateStudent(this.newStudent.id, this.newStudent)
-      .subscribe(() => {
-        this.resetForm();
-        this.loadStudents();
-      });
+    const index = this.students.findIndex(s => s.id === this.newStudent.id);
+
+    if (index !== -1) {
+      this.students[index] = { ...this.newStudent };
+    }
+
+    this.service.updateStudent(this.newStudent.id, this.newStudent).subscribe();
+
+    this.resetForm();
   }
 
-  // ✅ RESET FORM
   resetForm() {
     this.newStudent = { id: undefined, name: '', email: '' };
     this.isEditMode = false;
+  }
+
+  trackById(index: number, item: Student) {
+    return item.id;
   }
 }

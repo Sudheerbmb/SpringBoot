@@ -15,27 +15,22 @@ export class StudentService {
 
   constructor(private http: HttpClient) {}
 
-  // ✅ GET ALL
   getStudents(): Observable<Student[]> {
     return this.http.get<Student[]>(this.api);
   }
 
-  // ✅ GET BY ID
   getStudentById(id: number): Observable<Student> {
     return this.http.get<Student>(`${this.api}/${id}`);
   }
 
-  // ✅ CREATE
   addStudent(student: Student): Observable<Student> {
     return this.http.post<Student>(this.api, student);
   }
 
-  // ✅ UPDATE
   updateStudent(id: number, student: Student): Observable<Student> {
     return this.http.put<Student>(`${this.api}/${id}`, student);
   }
 
-  // ✅ DELETE
   deleteStudent(id: number): Observable<any> {
     return this.http.delete(`${this.api}/${id}`);
   }
