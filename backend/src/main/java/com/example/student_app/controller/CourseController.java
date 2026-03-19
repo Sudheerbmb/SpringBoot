@@ -185,7 +185,7 @@ public class CourseController {
 
     // GET COURSE STATISTICS
     @GetMapping("/{id}/stats")
-    public ResponseEntity<Object> getCourseStats(@PathVariable Long id) {
+    public ResponseEntity<CourseStats> getCourseStats(@PathVariable Long id) {
         Optional<Course> courseOpt = courseRepository.findById(id);
         if (courseOpt.isEmpty()) {
             return ResponseEntity.notFound().build();
@@ -197,22 +197,22 @@ public class CourseController {
         long activeEnrollments = enrollmentRepository.countByCourseIdAndStatus(id, com.example.student_app.model.Enrollment.EnrollmentStatus.ENROLLED);
         long completedEnrollments = enrollmentRepository.countByCourseIdAndStatus(id, com.example.student_app.model.Enrollment.EnrollmentStatus.COMPLETED);
         
-        var stats = new Object() {
-            public final Long courseId = course.getId();
-            public final String courseName = course.getCourseName();
-            public final String courseCode = course.getCourseCode();
-            public final Integer capacity = course.getCapacity();
-            public final Integer enrolledCount = course.getEnrolledCount();
-            public final long totalEnrollments = totalEnrollments;
-            public final long activeEnrollments = activeEnrollments;
-            public final long completedEnrollments = completedEnrollments;
-            public final double enrollmentRate = course.getEnrollmentRate();
-            public final int availableSlots = course.getAvailableSlots();
-            public final boolean hasCapacity = course.hasCapacity();
-            public final Course.CourseStatus status = course.getStatus();
-            public final Course.CourseLevel level = course.getLevel();
-            public final String department = course.getDepartment();
-        };
+        CourseStats stats = new CourseStats(
+                course.getId(),
+                course.getCourseName(),
+                course.getCourseCode(),
+                course.getCapacity(),
+                course.getEnrolledCount(),
+                totalEnrollments,
+                activeEnrollments,
+                completedEnrollments,
+                course.getEnrollmentRate(),
+                course.getAvailableSlots(),
+                course.hasCapacity(),
+                course.getStatus(),
+                course.getLevel(),
+                course.getDepartment()
+        );
         
         return ResponseEntity.ok(stats);
     }
@@ -245,5 +245,57 @@ public class CourseController {
         Course updatedCourse = courseRepository.save(course);
         
         return ResponseEntity.ok(updatedCourse);
+    }
+
+    // DTO for course statistics
+    public static class CourseStats {
+        private final Long courseId;
+        private final String courseName;
+        private final String courseCode;
+        private final Integer capacity;
+        private final Integer enrolledCount;
+        private final long totalEnrollments;
+        private final long activeEnrollments;
+        private final long completedEnrollments;
+        private final double enrollmentRate;
+        private final int availableSlots;
+        private final boolean hasCapacity;
+        private final Course.CourseStatus status;
+        private final Course.CourseLevel level;
+        private final String department;
+
+        public CourseStats(Long courseId, String courseName, String courseCode, Integer capacity, Integer enrolledCount,
+                          long totalEnrollments, long activeEnrollments, long completedEnrollments, double enrollmentRate,
+                          int availableSlots, boolean hasCapacity, Course.CourseStatus status, Course.CourseLevel level, String department) {
+            this.courseId = courseId;
+            this.courseName = courseName;
+            this.courseCode = courseCode;
+            this.capacity = capacity;
+            this.enrolledCount = enrolledCount;
+            this.totalEnrollments = totalEnrollments;
+            this.activeEnrollments = activeEnrollments;
+            this.completedEnrollments = completedEnrollments;
+            this.enrollmentRate = enrollmentRate;
+            this.availableSlots = availableSlots;
+            this.hasCapacity = hasCapacity;
+            this.status = status;
+            this.level = level;
+            this.department = department;
+        }
+
+        public Long getCourseId() { return courseId; }
+        public String getCourseName() { return courseName; }
+        public String getCourseCode() { return courseCode; }
+        public Integer getCapacity() { return capacity; }
+        public Integer getEnrolledCount() { return enrolledCount; }
+        public long getTotalEnrollments() { return totalEnrollments; }
+        public long getActiveEnrollments() { return activeEnrollments; }
+        public long getCompletedEnrollments() { return completedEnrollments; }
+        public double getEnrollmentRate() { return enrollmentRate; }
+        public int getAvailableSlots() { return availableSlots; }
+        public boolean isHasCapacity() { return hasCapacity; }
+        public Course.CourseStatus getStatus() { return status; }
+        public Course.CourseLevel getLevel() { return level; }
+        public String getDepartment() { return department; }
     }
 }

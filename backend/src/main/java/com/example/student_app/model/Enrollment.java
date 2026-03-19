@@ -26,7 +26,7 @@ public class Enrollment {
     @Enumerated(EnumType.STRING)
     private EnrollmentStatus status;
 
-    private String enrollmentType;
+    private EnrollmentType enrollmentType;
 
     private String grade;
 
@@ -87,8 +87,8 @@ public class Enrollment {
         this.updatedAt = LocalDateTime.now();
     }
 
-    public String getEnrollmentType() { return enrollmentType; }
-    public void setEnrollmentType(String enrollmentType) { this.enrollmentType = enrollmentType; }
+    public EnrollmentType getEnrollmentType() { return enrollmentType; }
+    public void setEnrollmentType(EnrollmentType enrollmentType) { this.enrollmentType = enrollmentType; }
 
     public String getGrade() { return grade; }
     public void setGrade(String grade) { 

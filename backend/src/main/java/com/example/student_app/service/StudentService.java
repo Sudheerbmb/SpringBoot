@@ -101,12 +101,12 @@ public class StudentService {
 
     // GET STUDENTS BY COURSE
     public List<Student> getStudentsByCourse(Long courseId) {
-        return repo.findByCourse(courseId);
+        return repo.findByCourse(String.valueOf(courseId));
     }
 
     // GET STUDENTS BY STATUS
     public List<Student> getStudentsByStatus(String status) {
-        return repo.findByStatus(status);
+        return repo.findByStatus(Student.StudentStatus.valueOf(status));
     }
 
     // GET STUDENTS BY MAJOR

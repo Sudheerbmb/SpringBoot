@@ -75,5 +75,8 @@ public interface AssignmentRepository extends JpaRepository<Assignment, Long> {
     @Query("SELECT COUNT(a) FROM Assignment a WHERE a.dueDate < :now AND a.status = 'PUBLISHED'")
     long countOverdueAssignments(@Param("now") LocalDateTime now);
 
+    @Query("SELECT a FROM Assignment a WHERE a.course.id IN (SELECT e.course.id FROM Enrollment e WHERE e.student.id = :studentId)")
+    List<Assignment> findAssignmentsByStudent(@Param("studentId") Long studentId);
+
     boolean existsByCourseIdAndTitle(Long courseId, String title);
 }

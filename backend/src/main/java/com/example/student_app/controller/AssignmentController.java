@@ -173,7 +173,7 @@ public class AssignmentController {
 
     // GET ASSIGNMENT STATISTICS
     @GetMapping("/{id}/stats")
-    public ResponseEntity<Object> getAssignmentStats(@PathVariable Long id) {
+    public ResponseEntity<AssignmentStats> getAssignmentStats(@PathVariable Long id) {
         Optional<Assignment> assignmentOpt = assignmentRepository.findById(id);
         if (assignmentOpt.isEmpty()) {
             return ResponseEntity.notFound().build();
@@ -185,23 +185,23 @@ public class AssignmentController {
         long submittedSubmissions = submissionRepository.countSubmittedSubmissionsByAssignment(id);
         Double averageScore = assignmentRepository.getAveragePointsByCourse(assignment.getCourse().getId());
         
-        var stats = new Object() {
-            public final Long assignmentId = assignment.getId();
-            public final String title = assignment.getTitle();
-            public final Assignment.AssignmentType type = assignment.getType();
-            public final Integer totalPoints = assignment.getTotalPoints();
-            public final LocalDateTime dueDate = assignment.getDueDate();
-            public final Assignment.AssignmentStatus status = assignment.getStatus();
-            public final long totalSubmissions = totalSubmissions;
-            public final long submittedSubmissions = submittedSubmissions;
-            public final long ungradedSubmissions = totalSubmissions - submittedSubmissions;
-            public final double submissionRate = totalSubmissions > 0 ? (double) submittedSubmissions / totalSubmissions * 100 : 0;
-            public final boolean isOverdue = assignment.isOverdue();
-            public final boolean isAvailable = assignment.isAvailable();
-            public final long daysUntilDue = assignment.getDaysUntilDue();
-            public final boolean hasTimeLimit = assignment.hasTimeLimit();
-            public final boolean allowsLateSubmission = assignment.getAllowLateSubmission();
-        };
+        AssignmentStats stats = new AssignmentStats(
+                assignment.getId(),
+                assignment.getTitle(),
+                assignment.getType(),
+                assignment.getTotalPoints(),
+                assignment.getDueDate(),
+                assignment.getStatus(),
+                totalSubmissions,
+                submittedSubmissions,
+                totalSubmissions - submittedSubmissions,
+                totalSubmissions > 0 ? (double) submittedSubmissions / totalSubmissions * 100 : 0,
+                assignment.isOverdue(),
+                assignment.isAvailable(),
+                assignment.getDaysUntilDue(),
+                assignment.hasTimeLimit(),
+                assignment.getAllowLateSubmission()
+        );
         
         return ResponseEntity.ok(stats);
     }
@@ -255,5 +255,62 @@ public class AssignmentController {
         
         Pageable pageable = PageRequest.of(0, limit);
         return assignmentRepository.findUpcomingAssignments(pageable);
+    }
+
+    // DTO for assignment statistics
+    public static class AssignmentStats {
+        private final Long assignmentId;
+        private final String title;
+        private final Assignment.AssignmentType type;
+        private final Integer totalPoints;
+        private final LocalDateTime dueDate;
+        private final Assignment.AssignmentStatus status;
+        private final long totalSubmissions;
+        private final long submittedSubmissions;
+        private final long ungradedSubmissions;
+        private final double submissionRate;
+        private final boolean isOverdue;
+        private final boolean isAvailable;
+        private final long daysUntilDue;
+        private final boolean hasTimeLimit;
+        private final boolean allowsLateSubmission;
+
+        public AssignmentStats(Long assignmentId, String title, Assignment.AssignmentType type, Integer totalPoints,
+                             LocalDateTime dueDate, Assignment.AssignmentStatus status, long totalSubmissions,
+                             long submittedSubmissions, long ungradedSubmissions, double submissionRate,
+                             boolean isOverdue, boolean isAvailable, long daysUntilDue, boolean hasTimeLimit,
+                             boolean allowsLateSubmission) {
+            this.assignmentId = assignmentId;
+            this.title = title;
+            this.type = type;
+            this.totalPoints = totalPoints;
+            this.dueDate = dueDate;
+            this.status = status;
+            this.totalSubmissions = totalSubmissions;
+            this.submittedSubmissions = submittedSubmissions;
+            this.ungradedSubmissions = ungradedSubmissions;
+            this.submissionRate = submissionRate;
+            this.isOverdue = isOverdue;
+            this.isAvailable = isAvailable;
+            this.daysUntilDue = daysUntilDue;
+            this.hasTimeLimit = hasTimeLimit;
+            this.allowsLateSubmission = allowsLateSubmission;
+        }
+
+        public Long getAssignmentId() { return assignmentId; }
+        public String getTitle() { return title; }
+        public Assignment.AssignmentType getType() { return type; }
+        public Integer getTotalPoints() { return totalPoints; }
+        public LocalDateTime getDueDate() { return dueDate; }
+        public Assignment.AssignmentStatus getStatus() { return status; }
+        public long getTotalSubmissions() { return totalSubmissions; }
+        public long getSubmittedSubmissions() { return submittedSubmissions; }
+        public long getUngradedSubmissions() { return ungradedSubmissions; }
+        public double getSubmissionRate() { return submissionRate; }
+        public boolean isIsOverdue() { return isOverdue; }
+        public boolean isIsAvailable() { return isAvailable; }
+        public long getDaysUntilDue() { return daysUntilDue; }
+        public boolean isHasTimeLimit() { return hasTimeLimit; }
+        public boolean isAllowsLateSubmission() { return allowsLateSubmission; }
     }
 }

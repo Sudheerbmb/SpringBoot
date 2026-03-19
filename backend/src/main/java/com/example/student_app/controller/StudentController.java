@@ -231,7 +231,7 @@ public class StudentController {
 
     // GET STUDENT ACADEMIC SUMMARY
     @GetMapping("/{id}/academic-summary")
-    public ResponseEntity<Object> getAcademicSummary(@PathVariable Long id) {
+    public ResponseEntity<AcademicSummary> getAcademicSummary(@PathVariable Long id) {
         Optional<Student> studentOpt = studentService.getStudentById(id);
         if (studentOpt.isEmpty()) {
             return ResponseEntity.notFound().build();
@@ -259,20 +259,20 @@ public class StudentController {
         // Get total credits
         Integer totalCredits = enrollmentRepository.getTotalCreditsByStudent(id);
         
-        var summary = new Object() {
-            public final Long studentId = student.getId();
-            public final String studentName = student.getName();
-            public final String email = student.getEmail();
-            public final String major = student.getMajor();
-            public final Double gpa = student.getGpa();
-            public final Integer creditsCompleted = student.getCreditsCompleted();
-            public final Integer totalCreditsEarned = totalCredits;
-            public final long completedCoursesCount = completedCourses;
-            public final long activeCoursesCount = activeCourses;
-            public final long totalEnrollments = enrollments.size();
-            public final double averageScore = averageScore;
-            public final long gradedAssignments = gradedSubmissions.size();
-        };
+        AcademicSummary summary = new AcademicSummary(
+                student.getId(),
+                student.getName(),
+                student.getEmail(),
+                student.getMajor(),
+                student.getGpa(),
+                student.getCreditsCompleted(),
+                totalCredits,
+                completedCourses,
+                activeCourses,
+                enrollments.size(),
+                averageScore,
+                gradedSubmissions.size()
+        );
         
         return ResponseEntity.ok(summary);
     }
@@ -292,5 +292,52 @@ public class StudentController {
         public void setContent(String content) { this.content = content; }
         public String getAttachmentUrl() { return attachmentUrl; }
         public void setAttachmentUrl(String attachmentUrl) { this.attachmentUrl = attachmentUrl; }
+    }
+
+    // DTO for academic summary
+    public static class AcademicSummary {
+        private final Long studentId;
+        private final String studentName;
+        private final String email;
+        private final String major;
+        private final Double gpa;
+        private final Integer creditsCompleted;
+        private final Integer totalCreditsEarned;
+        private final long completedCoursesCount;
+        private final long activeCoursesCount;
+        private final long totalEnrollments;
+        private final double averageScore;
+        private final long gradedAssignments;
+
+        public AcademicSummary(Long studentId, String studentName, String email, String major, 
+                             Double gpa, Integer creditsCompleted, Integer totalCreditsEarned,
+                             long completedCoursesCount, long activeCoursesCount, long totalEnrollments,
+                             double averageScore, long gradedAssignments) {
+            this.studentId = studentId;
+            this.studentName = studentName;
+            this.email = email;
+            this.major = major;
+            this.gpa = gpa;
+            this.creditsCompleted = creditsCompleted;
+            this.totalCreditsEarned = totalCreditsEarned;
+            this.completedCoursesCount = completedCoursesCount;
+            this.activeCoursesCount = activeCoursesCount;
+            this.totalEnrollments = totalEnrollments;
+            this.averageScore = averageScore;
+            this.gradedAssignments = gradedAssignments;
+        }
+
+        public Long getStudentId() { return studentId; }
+        public String getStudentName() { return studentName; }
+        public String getEmail() { return email; }
+        public String getMajor() { return major; }
+        public Double getGpa() { return gpa; }
+        public Integer getCreditsCompleted() { return creditsCompleted; }
+        public Integer getTotalCreditsEarned() { return totalCreditsEarned; }
+        public long getCompletedCoursesCount() { return completedCoursesCount; }
+        public long getActiveCoursesCount() { return activeCoursesCount; }
+        public long getTotalEnrollments() { return totalEnrollments; }
+        public double getAverageScore() { return averageScore; }
+        public long getGradedAssignments() { return gradedAssignments; }
     }
 }

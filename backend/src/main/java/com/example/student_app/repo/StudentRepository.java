@@ -29,6 +29,9 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     @Query("SELECT s FROM Student s WHERE s.gpa >= :minGpa ORDER BY s.gpa DESC")
     List<Student> findTopPerformingStudents(@Param("minGpa") Double minGpa);
     
+    @Query("SELECT s FROM Student s ORDER BY s.gpa DESC")
+    List<Student> findTopPerformers();
+    
     @Query("SELECT COUNT(s) FROM Student s WHERE s.status = :status")
     Long countByStatus(@Param("status") Student.StudentStatus status);
     
