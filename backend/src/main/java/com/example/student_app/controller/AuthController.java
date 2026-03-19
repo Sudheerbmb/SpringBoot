@@ -111,6 +111,7 @@ public class AuthController {
             );
 
             Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
             response.put("message", "User registered successfully");
             response.put("user", Map.of(
                 "id", user.getId(),
@@ -123,7 +124,8 @@ public class AuthController {
 
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
-            Map<String, String> error = new HashMap<>();
+            Map<String, Object> error = new HashMap<>();
+            error.put("success", false);
             error.put("error", e.getMessage());
             return ResponseEntity.badRequest().body(error);
         }
