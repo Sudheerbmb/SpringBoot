@@ -63,13 +63,10 @@ public interface EnrollmentRepository extends JpaRepository<Enrollment, Long> {
     @Query("SELECT AVG(e.finalScore) FROM Enrollment e WHERE e.course.id = :courseId AND e.finalScore IS NOT NULL")
     Double getAverageScoreByCourse(@Param("courseId") Long courseId);
 
-    @Query("SELECT e FROM Enrollment e WHERE e.student.id = :studentId AND e.semester = :semester AND e.academicYear = :academicYear")
-    List<Enrollment> findByStudentIdAndSemester(@Param("studentId") Long studentId, @Param("semester") String semester, @Param("academicYear") String academicYear);
-
     boolean existsByStudentIdAndCourseId(Long studentId, Long courseId);
 
     @Query("SELECT e FROM Enrollment e WHERE e.enrollmentType = :type")
-    List<Enrollment> findByEnrollmentType(@Param("type") String type);
+    List<Enrollment> findByEnrollmentType(@Param("type") Enrollment.EnrollmentType type);
 
     @Query("SELECT COUNT(e) FROM Enrollment e WHERE e.student.id = :studentId AND e.status = 'COMPLETED'")
     long countCompletedCoursesByStudent(@Param("studentId") Long studentId);
