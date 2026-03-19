@@ -530,24 +530,17 @@ export class StudentsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadStudents();
+    // Subscribe to cached data for instant loading
+    this.apiService.students$.subscribe(students => {
+      this.students = students;
+    });
+    this.apiService.studentsLoading$.subscribe(loading => {
+      this.isLoading = loading;
+    });
   }
 
   loadStudents(): void {
-    this.isLoading = true;
-    this.error = null;
-    
-    this.apiService.getStudents().subscribe({
-      next: (data) => {
-        this.students = data;
-        this.isLoading = false;
-      },
-      error: (err) => {
-        this.error = 'Failed to load students. Please try again.';
-        this.isLoading = false;
-        console.error('Error loading students:', err);
-      }
-    });
+    this.apiService.refreshStudents();
   }
 
   addStudent(): void {
@@ -585,10 +578,8 @@ export class StudentsComponent implements OnInit {
 
   deleteStudent(id: number): void {
     if (confirm('Are you sure you want to delete this student?')) {
+      // Optimistic delete - UI updates immediately via service
       this.apiService.deleteStudent(id).subscribe({
-        next: () => {
-          this.students = this.students.filter(s => s.id !== id);
-        },
         error: (err) => {
           alert('Failed to delete student. Please try again.');
           console.error('Error deleting student:', err);

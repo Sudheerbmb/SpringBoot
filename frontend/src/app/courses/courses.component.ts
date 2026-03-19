@@ -506,24 +506,17 @@ export class CoursesComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadCourses();
+    // Subscribe to cached data for instant loading
+    this.apiService.courses$.subscribe(courses => {
+      this.courses = courses;
+    });
+    this.apiService.coursesLoading$.subscribe(loading => {
+      this.isLoading = loading;
+    });
   }
 
   loadCourses(): void {
-    this.isLoading = true;
-    this.error = null;
-    
-    this.apiService.getCourses().subscribe({
-      next: (data) => {
-        this.courses = data;
-        this.isLoading = false;
-      },
-      error: (err) => {
-        this.error = 'Failed to load courses. Please try again.';
-        this.isLoading = false;
-        console.error('Error loading courses:', err);
-      }
-    });
+    this.apiService.refreshCourses();
   }
 
   addCourse(): void {
@@ -560,10 +553,8 @@ export class CoursesComponent implements OnInit {
 
   deleteCourse(id: number): void {
     if (confirm('Are you sure you want to delete this course?')) {
+      // Optimistic delete - UI updates immediately via service
       this.apiService.deleteCourse(id).subscribe({
-        next: () => {
-          this.courses = this.courses.filter(c => c.id !== id);
-        },
         error: (err) => {
           alert('Failed to delete course. Please try again.');
           console.error('Error deleting course:', err);

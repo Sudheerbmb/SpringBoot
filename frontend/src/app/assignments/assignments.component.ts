@@ -523,24 +523,17 @@ export class AssignmentsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadAssignments();
+    // Subscribe to cached data for instant loading
+    this.apiService.assignments$.subscribe(assignments => {
+      this.assignments = assignments;
+    });
+    this.apiService.assignmentsLoading$.subscribe(loading => {
+      this.isLoading = loading;
+    });
   }
 
   loadAssignments(): void {
-    this.isLoading = true;
-    this.error = null;
-    
-    this.apiService.getAssignments().subscribe({
-      next: (data) => {
-        this.assignments = data;
-        this.isLoading = false;
-      },
-      error: (err) => {
-        this.error = 'Failed to load assignments. Please try again.';
-        this.isLoading = false;
-        console.error('Error loading assignments:', err);
-      }
-    });
+    this.apiService.refreshAssignments();
   }
 
   addAssignment(): void {
@@ -578,10 +571,8 @@ export class AssignmentsComponent implements OnInit {
 
   deleteAssignment(id: number): void {
     if (confirm('Are you sure you want to delete this assignment?')) {
+      // Optimistic delete - UI updates immediately via service
       this.apiService.deleteAssignment(id).subscribe({
-        next: () => {
-          this.assignments = this.assignments.filter(a => a.id !== id);
-        },
         error: (err) => {
           alert('Failed to delete assignment. Please try again.');
           console.error('Error deleting assignment:', err);
