@@ -128,14 +128,14 @@ import { ApiService, Assignment } from '../services/api.service';
               <p><strong>Type:</strong> {{ assignment.type }}</p>
               <p><strong>Total Points:</strong> {{ assignment.totalPoints }}</p>
               <p><strong>Due Date:</strong> {{ formatDate(assignment.dueDate) }}</p>
-              <p><strong>Assigned:</strong> {{ formatDate(assignment.assignedDate) }}</p>
+              <p><strong>Created:</strong> {{ formatDate(assignment.createdAt) }}</p>
               
               <div *ngIf="assignment.timeLimit" class="time-info">
                 <p><strong>Time Limit:</strong> {{ assignment.timeLimit }} minutes</p>
               </div>
               
-              <div *ngIf="assignment.allowsLateSubmission" class="late-info">
-                <p><strong>Late Submission:</strong> Allowed ({{ assignment.latePenalty }}% penalty)</p>
+              <div *ngIf="assignment.allowLateSubmission" class="late-info">
+                <p><strong>Late Submission:</strong> Allowed ({{ assignment.latePenaltyPercentage }}% penalty)</p>
               </div>
               
               <div class="due-status" [class]="getDueStatus(assignment)">
