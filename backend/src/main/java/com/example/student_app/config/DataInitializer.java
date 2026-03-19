@@ -3,11 +3,14 @@ package com.example.student_app.config;
 import com.example.student_app.model.Student;
 import com.example.student_app.model.Course;
 import com.example.student_app.model.Assignment;
+import com.example.student_app.model.User;
 import com.example.student_app.repo.StudentRepository;
 import com.example.student_app.repo.CourseRepository;
 import com.example.student_app.repo.AssignmentRepository;
+import com.example.student_app.repo.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -21,6 +24,12 @@ public class DataInitializer implements CommandLineRunner {
 
     @Autowired
     private AssignmentRepository assignmentRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public void run(String... args) throws Exception {
@@ -37,6 +46,11 @@ public class DataInitializer implements CommandLineRunner {
         // Check if there are any assignments, if not, add sample data
         if (assignmentRepository.count() == 0) {
             initializeSampleAssignments();
+        }
+        
+        // Create default user for testing
+        if (userRepository.count() == 0) {
+            initializeDefaultUser();
         }
     }
 
@@ -302,5 +316,22 @@ public class DataInitializer implements CommandLineRunner {
         }
 
         System.out.println("Sample assignment data initialized successfully!");
+    }
+
+    private void initializeDefaultUser() {
+        User defaultUser = new User();
+        defaultUser.setUsername("Sudheer");
+        defaultUser.setEmail("sudheer@example.com");
+        defaultUser.setPassword(passwordEncoder.encode("Sudheer@123"));
+        defaultUser.setFirstName("Sudheer");
+        defaultUser.setLastName("User");
+        defaultUser.setRole(User.UserRole.ADMIN);
+        
+        userRepository.save(defaultUser);
+        
+        System.out.println("Default user created successfully!");
+        System.out.println("Username: Sudheer");
+        System.out.println("Password: Sudheer@123");
+        System.out.println("Role: ADMIN");
     }
 }
