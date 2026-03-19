@@ -88,7 +88,7 @@ public class GroqService {
                 .orElse(0.0);
 
         long attendanceRate = attendance.stream()
-                .mapToLong(a -> a.isPresent() ? 1 : 0)
+                .mapToLong(a -> a.getStatus() == Attendance.AttendanceStatus.PRESENT ? 1 : 0)
                 .sum();
 
         return String.format("""
@@ -181,7 +181,7 @@ public class GroqService {
                 student.getName(), student.getEmail(), student.getMajor(), student.getSemester(), 
                 student.getGpa(), student.getCreditsCompleted(),
                 grades.stream().map(g -> g.getSubject() + ": " + g.getScore()).collect(Collectors.joining(", ")),
-                attendance.stream().map(a -> a.getDate() + ": " + (a.isPresent() ? "Present" : "Absent")).collect(Collectors.joining(", "))
+                attendance.stream().map(a -> a.getAttendanceDate() + ": " + a.getStatus()).collect(Collectors.joining(", "))
         );
     }
 }
